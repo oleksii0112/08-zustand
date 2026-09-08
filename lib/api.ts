@@ -1,6 +1,6 @@
 import axios from "axios";
 import type { Note, NewNote, NoteTag } from "@/types/note";
-
+import { cache } from "react";
 export interface FetchNotesParams {
   search?: string;
   page: number;
@@ -30,14 +30,14 @@ export const fetchNotes = async (
 };
 
 
-export const fetchNoteById = async (
+export const fetchNoteById = cache(async (
   id: string
 ): Promise<Note> => {
   const response = await axios.get<Note>(`${BASE_URL}/notes/${id}`, {
     headers,
   });
   return response.data;
-};
+});
 
 export const createNote = async (params: NewNote): Promise<Note> => {
   const response = await axios.post<Note>(`${BASE_URL}/notes`, params, {

@@ -1,11 +1,22 @@
 import css from "./page.module.css"
-
+import Image from "next/image";
 
 export default function Home() {
   return (
     <main>
       <div className={css.container}>
         <h1 className={css.title}>Welcome to NoteHub</h1>
+        <div className={css.imgWrapper}>
+          <Image
+            src="/notes.jpg"
+            alt="Notebook with some notes"
+            fill
+            priority
+            sizes="(max-width: 1280px) 90vw, 1280px"
+            style={{ objectFit: "cover" }}
+          />
+        </div>
+
         <p className={css.description}>
           NoteHub is a simple and efficient application designed for managing
           personal notes. It helps keep your thoughts organized and accessible

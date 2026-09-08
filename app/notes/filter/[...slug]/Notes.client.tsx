@@ -4,18 +4,17 @@ import css from "./NotesPage.module.css";
 import NoteList from "@/components/NoteList/NoteList";
 import SearchBox from "@/components/SearchBox/SearchBox";
 import Pagination from "@/components/Pagination/Pagination";
-import Modal from "@/components/Modal/Modal";
-import NoteForm from "@/components/NoteForm/NoteForm";
 import Loader from "@/components/Loader/Loader";
 import ErrorMessage from "@/components/ErrorMessage/ErrorMessage";
 
 import toast, { Toaster } from "react-hot-toast";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { fetchNotes, createNote, deleteNote } from "@/lib/api";
+import { fetchNotes, deleteNote } from "@/lib/api";
 import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useDebouncedCallback } from "use-debounce";
 import { NoteTag } from "@/types/note";
+import Link from "next/link";
 
 interface NotesProps {
   tag?: NoteTag;
@@ -25,7 +24,6 @@ export default function Notes({ tag }: NotesProps) {
   const [page, setPage] = useState(1);
   const [inputValue, setInputValue] = useState("");
   const [search, setSearch] = useState(``);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const perPage = 12;
 
   const { data, isLoading, isError } = useQuery({
@@ -59,15 +57,6 @@ export default function Notes({ tag }: NotesProps) {
     },
   });
 
-  const addNotes = useMutation({
-    mutationFn: createNote,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["getNotes"] });
-      setIsModalOpen(false);
-      toast.success(`Нотатку додано`);
-    },
-  });
-
   useEffect(() => {
     if (search && !isLoading && data?.notes.length === 0) {
       toast.error(`Нотатку не знайдено`);
@@ -87,9 +76,9 @@ export default function Notes({ tag }: NotesProps) {
           ></Pagination>
         )}
         {
-          <button className={css.button} onClick={() => setIsModalOpen(true)}>
+          <Link href="/notes/action/create" className={css.button}>
             Create note +
-          </button>
+          </Link>
         }
       </header>
       {isLoading && <Loader />}
@@ -101,14 +90,6 @@ export default function Notes({ tag }: NotesProps) {
         <p className={css.emptyState}>
           {tag ? `Нотаток з тегом "${tag}" ще немає` : "Нотаток ще немає"}
         </p>
-      )}
-      {isModalOpen && (
-        <Modal onClose={() => setIsModalOpen(false)}>
-          <NoteForm
-            onSubmit={(values) => addNotes.mutate(values)}
-            onCancel={() => setIsModalOpen(false)}
-          />
-        </Modal>
       )}
     </div>
   );

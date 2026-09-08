@@ -36,3 +36,11 @@
   background-color: black;
   color: palegreen;
 }
+
+.imgWrapper {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 1000px;
+  display: flex;
+  position: relative
+}
